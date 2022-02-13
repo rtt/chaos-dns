@@ -1,2 +1,3 @@
-# dns-bs
-A Domain Name Server with a miasmic twist
+# chaos dns
+
+A DNS server that you should not trust
