@@ -10,6 +10,7 @@ import (
 type Config struct {
 	Port        int
 	JsonLogging bool
+	File        string
 }
 
 const (
@@ -17,7 +18,6 @@ const (
 )
 
 func ParseCliArgs() (config Config, err error) {
-
 	defer func() {
 		if r := recover(); r != nil {
 			switch pval := r.(type) {
@@ -29,9 +29,10 @@ func ParseCliArgs() (config Config, err error) {
 
 	flag.IntVar(&config.Port, "port", getIntEnv("PORT", 53), "Port to listen on")
 	flag.BoolVar(&config.JsonLogging, "json-logging", getBoolEnv(jsonLoggingConfigKey, false), "If true, output logs in json format")
+	flag.StringVar(&config.File, "file", getEnv("FILE", ""), "Dig query/response to work with")
+	flag.Parse()
 
 	return config, err
-
 }
 
 func getIntEnv(key string, fallback int) int {
@@ -39,10 +40,12 @@ func getIntEnv(key string, fallback int) int {
 	if envStrValue == "" {
 		return fallback
 	}
+
 	envIntValue, err := strconv.Atoi(envStrValue)
 	if err != nil {
 		panic("Env Var " + key + " must be an integer")
 	}
+
 	return envIntValue
 }
 
@@ -51,10 +54,12 @@ func getBoolEnv(key string, fallback bool) bool {
 	if envStrValue == "" {
 		return fallback
 	}
+
 	envBoolValue, err := strconv.ParseBool(envStrValue)
 	if err != nil {
 		panic("Env Var " + key + " must be either true or false")
 	}
+
 	return envBoolValue
 }
 
@@ -64,5 +69,6 @@ func getEnv(key string, fallback string) string {
 			return value
 		}
 	}
+
 	return fallback
 }
